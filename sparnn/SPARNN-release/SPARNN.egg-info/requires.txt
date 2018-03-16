@@ -1,5 +1,0 @@
-numpy
-scipy
-pillow
-netCDF4
-Theano
