@@ -75,18 +75,24 @@ def DrawKDE(title, name, prob):
 #    plt.show()
 
 def DrawFlow(title, name, U, V):
+    global X, Y, mask
     X, Y = np.meshgrid(x_grid, y_grid)
     fig, ax = plt.subplots(figsize=(10,15))
     img = plt.imread("wl.JPG")
     ax.imshow(img, extent = ext)
-    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.sqrt(U**2 + V**2), density = 0.5, linewidth=0, cmap=plt.cm.Purples, arrowsize=np.sqrt(U**2 + V**2))
+#    mask = (np.round(10**12*np.sqrt(U**2 + V**2))>1).astype(int)
+#    U = np.multiply(mask, U)
+#    V = np.multiply(mask, V)
+#    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.sqrt(U**2 + V**2), density = 0.5, linewidth=1, cmap=plt.cm.Purples, arrowsize=0.5)
+#    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.round(2*10**10*np.sqrt(U**2 + V**2)), density = 0.5, linewidth=np.round(2*10**10*np.sqrt(U**2 + V**2)), cmap=plt.cm.Purples, arrowsize=0.5)
+    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = 'k', density = 0.5, linewidth=np.round(2*10**3*np.sqrt(U**2 + V**2)), arrowsize=0.5)
     ax.set_ylim([y_min/cell, y_max/cell])
     ax.set_xlim([x_min/cell, x_max/cell])
     plt.xticks(x_range, x_label)
     plt.yticks(y_range, y_label)
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="2%", pad=0.3)
-    plt.colorbar(strm.lines, cax=cax)
+#    divider = make_axes_locatable(ax)
+#    cax = divider.append_axes("right", size="2%", pad=0.3)
+#    plt.colorbar(strm.lines, cax=cax)
     #fig0.colorbar(strm.lines)
     ax.set_title(title)
     fig.savefig(name)
@@ -103,7 +109,7 @@ def FlowMap(prob1, prob2, alg, t1, t2):
         V = np.multiply(prob1.T, signal.convolve2d(prob2.T, mask_V/dist, boundary='fill', fillvalue = 0, mode='same'))
         
     name = 'figures/' + alg + 'Model' + str(t1) + "-" + str(t2) + "-" +str(cell)
-    title = alg + " Based Flow Map of Puerto Rico (" + time.strftime('%m/%d/%Y %H%p',  time.localtime(t1)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime(t2)).split(' ')[1] + ")"
+    title = alg + " Based Flow Map of Puerto Rico \n" + time.strftime('%m/%d/%Y %H%p',  time.localtime(t1)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime(t2)).split(' ')[1] 
     DrawFlow(title, name, U, V)
     
     
@@ -115,10 +121,62 @@ prob1 = kdemap(t1_1, t1_2)
 prob2 = kdemap(t2_1, t2_2)
 
 name = "figures/diff" + str((t1_1 + t1_2)/2) + "-" + str((t2_1 + t2_2)/2) + "-" + str(cell) + ".png"
-title = "Difference of Two Timestamps (" + time.strftime('%m/%d/%Y %H%p',  time.localtime((t1_1 + t1_2)/2)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime((t2_1 + t2_2)/2)).split(' ')[1] + ')'
+title = "Difference of Two Timestamps" + time.strftime('%m/%d/%Y %H%p',  time.localtime((t1_1 + t1_2)/2)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime((t2_1 + t2_2)/2)).split(' ')[1]
 DrawKDE(title, name, prob2 - prob1)
 
-FlowMap(prob1, prob2, "Gravity", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
 FlowMap(prob1, prob2, "Gradient", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
+#FlowMap(prob1, prob2, "Gravity", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
+
 #for i in range(24):
 #    print len()
+
+#title = "Vector Field(Gravity Based Model)\n" + time.strftime('%m/%d/%Y %H%p',  time.localtime((t1_1 + t1_2)/2)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime((t2_1 + t2_2)/2)).split(' ')[1]
+#fig, ax = plt.subplots(figsize=(7,15))
+#img = plt.imread("wl.JPG")
+#ax.imshow(img, extent = ext)
+#plt.quiver(X/(cell*1.0), Y/(cell*1.0), U, V, units='width')
+#plt.xticks(x_range, x_label)
+#plt.yticks(y_range, y_label)
+#plt.xticks(x_range, x_label)
+#plt.yticks(y_range, y_label)
+#ax.set_title(title)
+##qk = plt.quiverkey(Q, 0.9, 0.9, 2, r'$2 \frac{m}{s}$', labelpos='E',coordinates='figure')
+#plt.show()
+
+#global X, Y, mask
+#X, Y = np.meshgrid(x_grid, y_grid)
+#fig, ax = plt.subplots(figsize=(10,15))
+#img = plt.imread("wl.JPG")
+#ax.imshow(img, extent = ext)
+##mask = (np.round(10**12*np.sqrt(U**2 + V**2))>1).astype(int)
+##U = np.multiply(mask, U)
+##V = np.multiply(mask, V)
+#strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.sqrt(U**2 + V**2), density = 0.5, linewidth=1, cmap=plt.cm.Purples, arrowsize=0.5)
+##    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.round(2*10**10*np.sqrt(U**2 + V**2)), density = 0.5, linewidth=np.round(2*10**10*np.sqrt(U**2 + V**2)), cmap=plt.cm.Purples, arrowsize=0.5)
+#ax.set_ylim([y_min/cell, y_max/cell])
+#ax.set_xlim([x_min/cell, x_max/cell])
+#plt.xticks(x_range, x_label)
+#plt.yticks(y_range, y_label)
+#divider = make_axes_locatable(ax)
+#cax = divider.append_axes("right", size="2%", pad=0.3)
+#plt.colorbar(strm.lines, cax=cax)
+##fig0.colorbar(strm.lines)
+#ax.set_title(title)
+#plt.show()
+#fig.savefig(name)
+#print name + " saved..."
+
+#title = "Vector Length (Graient Based Model)\n" + time.strftime('%m/%d/%Y %H%p',  time.localtime((t1_1 + t1_2)/2)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime((t2_1 + t2_2)/2)).split(' ')[1]
+#fig, ax = plt.subplots(figsize=(10,15))
+#img = plt.imread("wl.JPG")
+#ax.imshow(img, extent = ext)
+
+#im = ax.imshow(np.rot90(np.sqrt(v**2 + u**2).T), cmap=plt.cm.gist_earth_r, alpha=0.8, extent = ext)
+#plt.quiver(X/(cell*1.0), Y/(cell*1.0), U, V, units='width', alpha=0.1)
+#plt.xticks(x_range, x_label)
+#plt.yticks(y_range, y_label)
+#divider = make_axes_locatable(ax)
+#cax = divider.append_axes("right", size="2%", pad=0.3)
+#ax.set_title(title)
+#plt.colorbar(im, cax=cax)
+#plt.show()
