@@ -18,7 +18,8 @@ db = MySQLdb.connect(host="keliudb.corzaau5yusv.us-east-2.rds.amazonaws.com",   
                      passwd="19930530",  # your password
                      db="PuertoRico")        # name of the data base
 
-temp = pd.read_sql("SELECT * FROM PuertoRico WHERE safegraph_id = '2b261110b878dd50de54740c91273643aa8ffaa7f804324556f11f0ce1a5f518';", con=db)
+#temp = pd.read_sql("SELECT * FROM PuertoRico WHERE safegraph_id = '2b261110b878dd50de54740c91273643aa8ffaa7f804324556f11f0ce1a5f518';", con=db)
+temp = pd.read_sql("SELECT * FROM trajectory", con=db)
 
 temp['x'] = None
 temp['y'] = None
