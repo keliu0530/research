@@ -21,7 +21,8 @@ x_max = 915700
 y_min = 571700
 y_max = 582000
 
-global x_grid, y_grid, W, cell, x_range, x_range, x_label, y_label, mask_U, mask_V, dist, values
+global x_grid, y_grid, W, cell, x_range, x_range, x_label, y_label, mask_U, mask_V, dist, values, font
+font = 20
 cell = 10
 x_grid = range(x_min + cell/2, x_max + cell/2, cell)
 y_grid = range(y_min + cell/2, y_max + cell/2, cell)
@@ -70,6 +71,8 @@ def DrawKDE(title, name, prob):
     cax = divider.append_axes("right", size="2%", pad=0.3)
     ax.set_title(title)
     plt.colorbar(im, cax=cax)
+    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(font)
     fig.savefig(name)   # save the figure to file
     print name + " saved..."
 #    plt.show()
@@ -83,18 +86,20 @@ def DrawFlow(title, name, U, V):
 #    mask = (np.round(10**12*np.sqrt(U**2 + V**2))>1).astype(int)
 #    U = np.multiply(mask, U)
 #    V = np.multiply(mask, V)
-#    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.sqrt(U**2 + V**2), density = 0.5, linewidth=1, cmap=plt.cm.Purples, arrowsize=0.5)
+    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.log2(np.sqrt(U**2 + V**2)), density = 0.5, linewidth=1.2, cmap=plt.cm.Purples, arrowsize=1.2)
 #    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.round(2*10**10*np.sqrt(U**2 + V**2)), density = 0.5, linewidth=np.round(2*10**10*np.sqrt(U**2 + V**2)), cmap=plt.cm.Purples, arrowsize=0.5)
-    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = 'k', density = 0.5, linewidth=np.round(2*10**3*np.sqrt(U**2 + V**2)), arrowsize=0.5)
+#    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = 'k', density = 0.5, linewidth=np.round(2*10**3*np.sqrt(U**2 + V**2)), arrowsize=0.5)
     ax.set_ylim([y_min/cell, y_max/cell])
     ax.set_xlim([x_min/cell, x_max/cell])
     plt.xticks(x_range, x_label)
     plt.yticks(y_range, y_label)
-#    divider = make_axes_locatable(ax)
-#    cax = divider.append_axes("right", size="2%", pad=0.3)
-#    plt.colorbar(strm.lines, cax=cax)
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="2%", pad=0.3)
+    plt.colorbar(strm.lines, cax=cax)
     #fig0.colorbar(strm.lines)
     ax.set_title(title)
+    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(font)
     fig.savefig(name)
     print name + " saved..."
 
@@ -121,11 +126,11 @@ prob1 = kdemap(t1_1, t1_2)
 prob2 = kdemap(t2_1, t2_2)
 
 name = "figures/diff" + str((t1_1 + t1_2)/2) + "-" + str((t2_1 + t2_2)/2) + "-" + str(cell) + ".png"
-title = "Difference of Two Timestamps" + time.strftime('%m/%d/%Y %H%p',  time.localtime((t1_1 + t1_2)/2)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime((t2_1 + t2_2)/2)).split(' ')[1]
+title = "Difference of Two Timestamps\n" + time.strftime('%m/%d/%Y %H%p',  time.localtime((t1_1 + t1_2)/2)) + ' to ' + time.strftime('%m/%d/%Y %H%p',  time.localtime((t2_1 + t2_2)/2)).split(' ')[1]
 DrawKDE(title, name, prob2 - prob1)
 
-FlowMap(prob1, prob2, "Gradient", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
-#FlowMap(prob1, prob2, "Gravity", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
+#FlowMap(prob1, prob2, "Gradient", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
+FlowMap(prob1, prob2, "Gravity", (t1_1 + t1_2)/2, (t2_1 + t2_2)/2)
 
 #for i in range(24):
 #    print len()

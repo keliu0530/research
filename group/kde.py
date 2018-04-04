@@ -21,7 +21,8 @@ x_max = 288000
 y_min = 210000
 y_max = 275000
 
-global x_grid, y_grid, W, cell, x_label, y_label, mask_U, mask_V, dist
+global x_grid, y_grid, W, cell, x_label, y_label, mask_U, mask_V, dist, font
+font = 20
 cell = 100
 x_grid = range(x_min + cell/2, x_max + cell/2, cell)
 y_grid = range(y_min + cell/2, y_max + cell/2, cell)
@@ -88,6 +89,8 @@ def DrawKDE(title, name, prob):
     cax = divider.append_axes("right", size="2%", pad=0.3)
     ax.set_title(title)
     plt.colorbar(im, cax=cax)
+    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(font)
     fig.savefig(name)   # save the figure to file
     print name + " saved..."
     
@@ -153,7 +156,7 @@ def DrawFlow(title, name, U, V):
     fig, ax = plt.subplots(figsize=(15,7))
     img = plt.imread("pr.JPG")
     ax.imshow(img, extent = ext)
-    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.log(np.sqrt(U**2 + V**2)), density = 1.2, linewidth=1, cmap=plt.cm.OrRd, arrowsize=0.7)
+    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.log2(np.sqrt(U**2 + V**2)), density = 1.2, linewidth=1, cmap=plt.cm.OrRd, arrowsize=0.7)
     ax.set_ylim([y_min/cell, y_max/cell])
     ax.set_xlim([x_min/cell, x_max/cell])
     plt.xticks(range(120000/cell, 300000/cell, 20000/cell), x_label)
@@ -163,6 +166,8 @@ def DrawFlow(title, name, U, V):
     plt.colorbar(strm.lines, cax=cax)
     #fig0.colorbar(strm.lines)
     ax.set_title(title)
+    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(font)
     fig.savefig(name)
     print name + " saved..."
 #    plt.show()
@@ -272,12 +277,12 @@ def FlowMap(prob1, prob2, alg, t1, t2):
 #FlowMap(prob1, prob2, "gradient")
 #DrawFlow()
 
-##8.28.2017 6:30am to 7:30am
-#t1_1 = 1503916200
-#t1_2 = 1503919800
-##8.28.2017 9:30am to 10:30am
-#t2_1 = 1503927000
-#t2_2 = 1503930600
+#8.28.2017 6:30am to 7:30am
+t1_1 = 1503916200
+t1_2 = 1503919800
+#8.28.2017 9:30am to 10:30am
+t2_1 = 1503927000
+t2_2 = 1503930600
 
 ##8.28.2017 3:30Pm to 4:30pm
 #t1_1 = 1503948600
@@ -286,12 +291,12 @@ def FlowMap(prob1, prob2, alg, t1, t2):
 #t2_1 = 1503959400
 #t2_2 = 1503963000
 
-#8.28.2017 1:30am to 2:30pm
-t1_1 = 1503898200
-t1_2 = 1503901800
-#8.28.2017 4:30pm to 5:30pm
-t2_1 = 1503909000
-t2_2 = 1503912600
+##8.28.2017 1:30am to 2:30pm
+#t1_1 = 1503898200
+#t1_2 = 1503901800
+##8.28.2017 4:30pm to 5:30pm
+#t2_1 = 1503909000
+#t2_2 = 1503912600
 
 prob1 = kdemap(t1_1, t1_2)
 prob2 = kdemap(t2_1, t2_2)
