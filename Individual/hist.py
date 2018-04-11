@@ -4,25 +4,26 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# data = pd.read_csv("user.csv")
-# x = data["COUNT(*)"].as_matrix()
-# del data
+data = pd.read_csv("user.csv")
+x = data["count"].as_matrix()
+del data
 
-# for i in range(len(x)):
-# 	if(x[i] > 6000):
-# 		x[i] = 6000
+for i in range(len(x)):
+    if(x[i] > 6000):
+	    x[i] = 6000
 
-# b = [0, 10, 50, 200, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500]
-# n, bins, patches = plt.hist(x, b, facecolor='g', alpha=0.75)
+b = [0, 10, 50, 200, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500]
+arr = plt.hist(x, b, facecolor='grey', alpha=0.75)
+for i in range(len(b)-1):
+    plt.text(arr[1][i] + 10,arr[0][i] + 10,str(int(arr[0][i])))
 
-
-# plt.xlabel('Number of record')
-# plt.ylabel('Number of user')
-# plt.title('Histogram ($\mu=389.1,\ \sigma=1127.9$)')
-# # plt.text(0, 6000, r'$\mu=100,\ \sigma=15$')
-# plt.axis([0, 6500, 0, 40000])
-# plt.grid(True)
-# plt.show()
+plt.xlabel('Number of points for each user')
+plt.ylabel('Number of user')
+#plt.title('Histogram ($\mu=389.1,\ \sigma=1127.9$)')
+# plt.text(0, 6000, r'$\mu=100,\ \sigma=15$')
+plt.axis([0, 6500, 0, 40000])
+plt.grid(True)
+plt.show()
 
 user = pd.read_csv("user1.csv").sort_values(['utc'])
 
