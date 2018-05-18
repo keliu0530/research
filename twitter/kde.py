@@ -73,9 +73,9 @@ def DrawKDE(title, name, prob):
     plt.colorbar(im, cax=cax)
     for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
         item.set_fontsize(font)
-    fig.savefig(name)   # save the figure to file
+#    fig.savefig(name)   # save the figure to file
     print name + " saved..."
-#    plt.show()
+    plt.show()
 
 def DrawFlow(title, name, U, V):
     global X, Y, mask
@@ -100,8 +100,9 @@ def DrawFlow(title, name, U, V):
     ax.set_title(title)
     for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
         item.set_fontsize(font)
-    fig.savefig(name)
+#    fig.savefig(name)
     print name + " saved..."
+    plt.show()
 
 def FlowMap(prob1, prob2, alg, t1, t2):
     global U, V

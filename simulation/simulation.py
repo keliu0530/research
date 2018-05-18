@@ -53,8 +53,8 @@ def gravity(prob1, prob2, W):
     #mask_U = - mask_U
     dist = mask_U**2 + mask_V**2
     dist[W][W] = 1
-    U = np.multiply(prob1.T, np.power(signal.convolve2d(prob2.T, mask_U/dist, boundary='fill', fillvalue = 0, mode='same'), 2))
-    V = np.multiply(prob1.T, np.power(signal.convolve2d(prob2.T, mask_V/dist, boundary='fill', fillvalue = 0, mode='same'), 2))
+    U = np.multiply(np.power(prob1.T, 1), np.power(signal.convolve2d(prob2.T, mask_U/dist, boundary='fill', fillvalue = 0, mode='same'), 1))
+    V = np.multiply(np.power(prob1.T, 1), np.power(signal.convolve2d(prob2.T, mask_V/dist, boundary='fill', fillvalue = 0, mode='same'), 1))
     return U, V
     
 def gradient(prob1, prob2):
@@ -77,12 +77,20 @@ def glyph(U, V):
     plt.quiver(X, Y, U, V, units='width')
     plt.show()
 
-mean = [30, 40]
-cov = [[200, 0], [0, 200]]  # diagonal covariance
+def DrawFlow(U, V):
+    fig, ax = plt.subplots(figsize=(7,7))
+    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.log2(np.sqrt(U**2 + V**2)), density = 1.2, linewidth=1, cmap=plt.cm.OrRd, arrowsize=0.7)
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="2%", pad=0.3)
+    plt.colorbar(strm.lines, cax=cax)
+    plt.show()
+
+mean = [50, 50]
+cov = [[100, 0], [0, 100]]  # diagonal covariance
 x1, y1 = np.random.multivariate_normal(mean, cov, 5000).T
 
-mean = [30, 40]
-cov = [[1000, 0], [0, 1000]]  # diagonal covariance
+mean = [50, 50]
+cov = [[200, 0], [0, 200]]  # diagonal covariance
 x2, y2 = np.random.multivariate_normal(mean, cov, 5000).T
 
 #x2 = x1 + 30
@@ -99,22 +107,23 @@ prob1 = kdemap(np.stack((x1, y1)), "Kernel density estimation of t0")
 prob2 = kdemap(np.stack((x2, y2)), "Kernel density estimation of t1")
 
 
-U1, V1 = gravity(prob1, prob2, 10)
+U1, V1 = gravity(prob1, prob2, 20)
 glyph(U1, V1)
 lg1 = np.sqrt(np.multiply(U1, U1) + np.multiply(V1, V1))
 drawmap(lg1.T, "Vector length")
-
+DrawFlow(U1, V1)
 
 U2, V2 = gradient(prob1, prob2)
 glyph(U2, V2)
 lg2 = np.sqrt(np.multiply(U2, U2) + np.multiply(V2, V2))
 drawmap(lg2.T, "Vector length")
-
+DrawFlow(U2, V2)
 
 U, V = vec(x1, y1, x2, y2)
 glyph(U, V)
 lg = np.sqrt(np.multiply(U, U) + np.multiply(V, V))
 drawmap(lg.T, "Vector length")
+DrawFlow(U, V)
 
 lg_mod = np.copy(lg)
 lg_mod[lg_mod == 0] = 1
@@ -128,13 +137,7 @@ drawmap(M1.T, "Angle")
 M2 = (np.multiply(U2, U) + np.multiply(V2, V))/np.multiply(lg2, lg_mod)
 drawmap(M2.T, "Angle")
 
-def DrawFlow(U, V):
-    fig, ax = plt.subplots(figsize=(7,7))
-    strm = ax.streamplot(X/(cell*1.0), Y/(cell*1.0), U/(cell*1.0), V/(cell*1.0), color = np.log2(np.sqrt(U**2 + V**2)), density = 1.2, linewidth=1, cmap=plt.cm.OrRd, arrowsize=0.7)
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="2%", pad=0.3)
-    plt.colorbar(strm.lines, cax=cax)
-    plt.show()
+
     #fig0.colorbar(strm.lines)
 #    ax.set_title(title)
 #    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
